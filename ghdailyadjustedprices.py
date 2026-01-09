@@ -2,8 +2,6 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime
 import os
-import smtplib
-from email.message import EmailMessage
 
 # -----------------------
 # CONFIGURATION
@@ -16,11 +14,6 @@ TICKERS = [
 
 OUTPUT_DIR = "output"   # GitHub runner local directory
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# Email config (use GitHub Secrets)
-EMAIL_SENDER = "nakin@lsfunds.com"
-EMAIL_RECEIVER = "nakin@lsfunds.com"
-EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]  # stored securely in GitHub
 
 # -----------------------
 # DOWNLOAD DATA
@@ -69,30 +62,4 @@ date_str = prior_trading_day.strftime("%Y-%m-%d")
 file_path = os.path.join(OUTPUT_DIR, f"Adjusted_Close_{date_str}.xlsx")
 df.to_excel(file_path, index=False)
 
-# -----------------------
-# EMAIL FILE
-# -----------------------
-msg = EmailMessage()
-msg["Subject"] = f"Adjusted Closing Prices – {date_str}"
-msg["From"] = EMAIL_SENDER
-msg["To"] = EMAIL_RECEIVER
-
-msg.set_content(
-    f"Attached are the adjusted closing prices for the prior trading day ({date_str})."
-)
-
-with open(file_path, "rb") as f:
-    msg.add_attachment(
-        f.read(),
-        maintype="application",
-        subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        filename=os.path.basename(file_path)
-    )
-
-with smtplib.SMTP("smtp.office365.com", 587) as smtp:
-    smtp.starttls()
-    smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
-    smtp.send_message(msg)
-
-
-print(f"Email sent with attachment: {file_path}")
+print(f"File successfully created: {file_path}")
