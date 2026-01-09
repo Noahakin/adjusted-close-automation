@@ -13,6 +13,9 @@ TICKERS = [
     "JEPI", "SPY", "QQQ"
 ]
 
+ONEDRIVE_USER = "nakin@lsfunds.com"
+
+
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -103,9 +106,10 @@ access_token = token_json["access_token"]
 # UPLOAD TO ONEDRIVE
 # -----------------------
 upload_url = (
-    "https://graph.microsoft.com/v1.0/me/drive/root:"
-    f"{ONEDRIVE_FOLDER}/{file_name}:/content"
+    f"https://graph.microsoft.com/v1.0/users/{ONEDRIVE_USER}"
+    f"/drive/root:{ONEDRIVE_FOLDER}/{file_name}:/content"
 )
+
 
 headers = {
     "Authorization": f"Bearer {access_token}",
@@ -117,4 +121,5 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
 
