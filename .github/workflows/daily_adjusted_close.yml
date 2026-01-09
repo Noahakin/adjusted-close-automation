@@ -20,14 +20,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run script
+        env:
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
           python ghdailyadjustedprices.py
-
-      - name: Upload adjusted close file
-        uses: actions/upload-artifact@v4
-        with:
-          name: adjusted-close
-          path: output/*.xlsx
