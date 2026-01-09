@@ -85,8 +85,19 @@ token_data = {
 }
 
 token_response = requests.post(token_url, data=token_data)
+
+print("Token status code:", token_response.status_code)
+print("Token response:", token_response.text)
+
 token_response.raise_for_status()
-access_token = token_response.json()["access_token"]
+
+token_json = token_response.json()
+
+if "access_token" not in token_json:
+    raise RuntimeError(f"No access_token returned: {token_json}")
+
+access_token = token_json["access_token"]
+
 
 # -----------------------
 # UPLOAD TO ONEDRIVE
@@ -106,3 +117,4 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
