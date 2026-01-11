@@ -2,7 +2,7 @@ name: Daily Adjusted Close
 
 on:
   schedule:
-    - cron: "0 10 * * 1-7"   # 5:00 AM ET (10:00 UTC)
+    - cron: "0 10 * * 1-6"   # 5:00 AM ET (10:00 UTC)
   workflow_dispatch:
 
 jobs:
