@@ -37,28 +37,17 @@ data = yf.download(
 )
 
 # -----------------------
-# BUILD LONG-FORM DATAFRAME
+# EXTRACT ADJUSTED CLOSE (WIDE FORMAT)
 # -----------------------
-rows = []
+adj_close = pd.DataFrame()
 
 for ticker in TICKERS:
-    if ticker not in data:
-        continue
+    if ticker in data:
+        adj_close[ticker] = data[ticker]["Adj Close"]
 
-    df_ticker = data[ticker].reset_index()
-
-    for _, row in df_ticker.iterrows():
-        rows.append({
-            "Date": row["Date"].strftime("%Y-%m-%d"),
-            "Ticker": ticker,
-            "Adjusted Close": (
-                round(float(row["Adj Close"]), 4)
-                if pd.notna(row["Adj Close"])
-                else None
-            )
-        })
-
-df = pd.DataFrame(rows)
+# Ensure Date index is clean
+adj_close.index = adj_close.index.strftime("%Y-%m-%d")
+adj_close.index.name = "Date"
 
 # -----------------------
 # SAVE FILE
@@ -67,7 +56,7 @@ today_str = datetime.utcnow().strftime("%Y-%m-%d")
 file_name = f"Adjusted_Close_5Y_{today_str}.xlsx"
 file_path = os.path.join(OUTPUT_DIR, file_name)
 
-df.to_excel(file_path, index=False)
+adj_close.to_excel(file_path)
 print(f"File created: {file_path}")
 
 # -----------------------
@@ -105,4 +94,3 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
-
