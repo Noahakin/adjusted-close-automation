@@ -53,7 +53,7 @@ adj_close.index.name = "Date"
 # SAVE FILE
 # -----------------------
 today_str = datetime.utcnow().strftime("%Y-%m-%d")
-file_name = f"Adjusted_Close_5Y_{today_str}.xlsx"
+file_name = f"Adjust_Close_5Y_{today_str}.xlsx"
 file_path = os.path.join(OUTPUT_DIR, file_name)
 
 adj_close.to_excel(file_path)
@@ -94,3 +94,4 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
