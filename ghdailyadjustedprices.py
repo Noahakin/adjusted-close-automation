@@ -15,7 +15,6 @@ TICKERS = [
 
 ONEDRIVE_USER = "nakin@lsfunds.com"
 
-
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -26,41 +25,37 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 
 # -----------------------
-# DOWNLOAD DATA
+# DOWNLOAD 5 YEARS OF DATA
 # -----------------------
 data = yf.download(
     tickers=TICKERS,
-    period="7d",
+    period="5y",
     interval="1d",
     auto_adjust=False,
-    group_by="ticker"
+    group_by="ticker",
+    threads=True
 )
 
 # -----------------------
-# PRIOR TRADING DAY
-# -----------------------
-available_dates = data[TICKERS[0]].index
-today = pd.Timestamp(datetime.utcnow().date())
-prior_trading_day = available_dates[available_dates < today].max()
-
-# -----------------------
-# BUILD DATAFRAME
+# BUILD LONG-FORM DATAFRAME
 # -----------------------
 rows = []
 
 for ticker in TICKERS:
-    try:
-        adj_close = data[ticker].loc[prior_trading_day, "Adj Close"]
+    if ticker not in data:
+        continue
+
+    df_ticker = data[ticker].reset_index()
+
+    for _, row in df_ticker.iterrows():
         rows.append({
-            "Date": prior_trading_day.strftime("%Y-%m-%d"),
+            "Date": row["Date"].strftime("%Y-%m-%d"),
             "Ticker": ticker,
-            "Adjusted Close": round(float(adj_close), 4)
-        })
-    except Exception:
-        rows.append({
-            "Date": prior_trading_day.strftime("%Y-%m-%d"),
-            "Ticker": ticker,
-            "Adjusted Close": None
+            "Adjusted Close": (
+                round(float(row["Adj Close"]), 4)
+                if pd.notna(row["Adj Close"])
+                else None
+            )
         })
 
 df = pd.DataFrame(rows)
@@ -68,8 +63,8 @@ df = pd.DataFrame(rows)
 # -----------------------
 # SAVE FILE
 # -----------------------
-date_str = prior_trading_day.strftime("%Y-%m-%d")
-file_name = f"Adjusted_Close_{date_str}.xlsx"
+today_str = datetime.utcnow().strftime("%Y-%m-%d")
+file_name = f"Adjusted_Close_5Y_{today_str}.xlsx"
 file_path = os.path.join(OUTPUT_DIR, file_name)
 
 df.to_excel(file_path, index=False)
@@ -88,19 +83,9 @@ token_data = {
 }
 
 token_response = requests.post(token_url, data=token_data)
-
-print("Token status code:", token_response.status_code)
-print("Token response:", token_response.text)
-
 token_response.raise_for_status()
 
-token_json = token_response.json()
-
-if "access_token" not in token_json:
-    raise RuntimeError(f"No access_token returned: {token_json}")
-
-access_token = token_json["access_token"]
-
+access_token = token_response.json()["access_token"]
 
 # -----------------------
 # UPLOAD TO ONEDRIVE
@@ -109,7 +94,6 @@ upload_url = (
     f"https://graph.microsoft.com/v1.0/users/{ONEDRIVE_USER}"
     f"/drive/root:{ONEDRIVE_FOLDER}/{file_name}:/content"
 )
-
 
 headers = {
     "Authorization": f"Bearer {access_token}",
@@ -121,5 +105,4 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
-
 
