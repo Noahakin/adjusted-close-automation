@@ -50,14 +50,15 @@ adj_close.index = adj_close.index.strftime("%Y-%m-%d")
 adj_close.index.name = "Date"
 
 # -----------------------
-# SAVE FILE
+# SAVE FILE (CSV)
 # -----------------------
 today_str = datetime.utcnow().strftime("%Y-%m-%d")
-file_name = f"Adjust_Close_5Y_{today_str}.xlsx"
+file_name = f"Adjust_Close_5Y_{today_str}.csv"
 file_path = os.path.join(OUTPUT_DIR, file_name)
 
-adj_close.to_excel(file_path)
+adj_close.to_csv(file_path)
 print(f"File created: {file_path}")
+
 
 # -----------------------
 # AUTHENTICATE TO GRAPH
@@ -94,4 +95,5 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
 
