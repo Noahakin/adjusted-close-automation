@@ -10,7 +10,7 @@ import requests
 TICKERS = [
     "OVL", "VOO", "OVS", "IJR", "OVF", "IEFA", "IEMG", "OVB",
     "AGG", "OVM", "MUB", "OVT", "VCSH", "OVLH", "KHPI",
-    "JEPI", "SPY", "QQQ"
+    "JEPI", "SPY", "QQQ", "NAGRX", "DNLIX", "ACWX", "DFNDX"
 ]
 
 ONEDRIVE_USER = "nakin@lsfunds.com"
@@ -95,5 +95,6 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
 
 
