@@ -29,12 +29,13 @@ CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 # -----------------------
 data = yf.download(
     tickers=TICKERS,
-    period="5y",
+    start="2021-02-01",
     interval="1d",
     auto_adjust=False,
     group_by="ticker",
     threads=True
 )
+
 
 # -----------------------
 # EXTRACT ADJUSTED CLOSE (WIDE FORMAT)
@@ -95,6 +96,7 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
 
 
 
