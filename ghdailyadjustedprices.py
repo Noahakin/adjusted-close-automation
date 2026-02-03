@@ -8,8 +8,8 @@ import requests
 # CONFIGURATION
 # -----------------------
 TICKERS = [
-    "OVL", "VOO", "OVS", "IJR", "OVF", "IEFA", "IEMG", "OVB",
-    "AGG", "OVM", "MUB", "OVT", "VCSH", "OVLH", "KHPI",
+    "VOO", "IJR", "IEFA", "IEMG", 
+    "AGG",  "MUB",  "VCSH", 
     "JEPI", "SPY", "QQQ", "NAGRX", "DNLIX", "ACWX", "DFNDX"
 ]
 
@@ -95,6 +95,7 @@ with open(file_path, "rb") as f:
 
 upload_response.raise_for_status()
 print("File uploaded to OneDrive successfully.")
+
 
 
 
