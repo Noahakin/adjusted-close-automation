@@ -2,8 +2,11 @@ name: Daily Adjusted Close
 
 on:
   schedule:
-    - cron: "0 10 * * 1-6"   # 5:00 AM ET (10:00 UTC)
+    - cron: "0 10 * * 1-6"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   run:
