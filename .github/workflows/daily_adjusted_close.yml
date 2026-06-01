@@ -2,7 +2,7 @@ name: Daily Adjusted Close
 
 on:
   schedule:
-    - cron: "0 10 * * 1-6"
+    - cron: "37 10 * * 1-6"
   workflow_dispatch:
 
 permissions:
